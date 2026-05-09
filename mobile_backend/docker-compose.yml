@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ems
+      POSTGRES_PASSWORD: ems
+      POSTGRES_DB: ems_mobile
+    ports: ["5433:5432"]
+    volumes:
+      - mobile_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ems -d ems_mobile"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6380:6379"]
+
+  backend:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://ems:ems@postgres:5432/ems_mobile
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build: .
+    command: ["python", "-m", "app.workers.run_rq"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://ems:ems@postgres:5432/ems_mobile
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  mobile_pgdata:

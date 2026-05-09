@@ -1,0 +1,79 @@
+# EMS stack. Default: nginx published on 18080 (avoids clash with host nginx on :80).
+# For TLS on a dedicated host with free :80/:443, see docker-compose.tls-public.yml and README.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ems
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ems}
+      POSTGRES_DB: ems_mobile
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ems -d ems_mobile"]
+      interval: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  backend:
+    build:
+      context: ./mobile_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000",
+      ]
+    environment:
+      DATABASE_URL: postgresql+psycopg2://ems:${POSTGRES_PASSWORD:-ems}@postgres:5432/ems_mobile
+      REDIS_URL: redis://redis:6379/0
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build:
+      context: ./mobile_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["python", "-m", "app.workers.run_rq"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://ems:${POSTGRES_PASSWORD:-ems}@postgres:5432/ems_mobile
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_started
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+      args:
+        VITE_API_BASE_URL: ""
+    image: ems-nginx:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      EMS_DOMAIN: ${EMS_DOMAIN:-emsmobile.icloud-solutions.net}
+    ports:
+      - "${EMS_PUBLISH_HTTP:-18080}:80"
+    depends_on:
+      - backend

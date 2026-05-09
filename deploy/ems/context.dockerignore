@@ -1,0 +1,6 @@
+# Used as /home/ems/.dockerignore when building the nginx image (context = /home/ems).
+mobile_backend
+data
+.env
+env.production.example
+mobile_admin_web/node_modules

@@ -1,0 +1,19 @@
+# Build context: server directory that contains mobile_admin_web/, nginx/, and this file.
+FROM node:22-alpine AS admin-build
+WORKDIR /build
+COPY mobile_admin_web/package.json ./
+RUN npm install
+COPY mobile_admin_web/ ./
+ARG VITE_API_BASE_URL=
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+RUN npm run build
+
+FROM nginx:1.27-alpine
+RUN apk add --no-cache gettext
+COPY nginx/docker-entrypoint.sh /docker-entrypoint.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+COPY nginx/templates/http.conf.template /etc/nginx/templates/http.conf.template
+COPY nginx/templates/https.conf.template /etc/nginx/templates/https.conf.template
+RUN sed -i 's/\r$//' /etc/nginx/templates/http.conf.template /etc/nginx/templates/https.conf.template
+COPY --from=admin-build /build/dist /usr/share/nginx/html
+ENTRYPOINT ["/docker-entrypoint.sh"]

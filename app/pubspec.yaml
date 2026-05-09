@@ -1,0 +1,58 @@
+name: altatheeb_mobile_app
+description: Altatheeb EMS Mobile App (parent persona, Light + Dark, AR/EN).
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+
+  # Routing
+  go_router: ^14.2.0
+
+  # Networking
+  dio: ^5.5.0
+  pretty_dio_logger: ^1.4.0
+
+  # Storage
+  flutter_secure_storage: ^9.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.3
+
+  # Notifications
+  firebase_core: ^3.3.0
+  firebase_messaging: ^15.0.4
+  flutter_local_notifications: ^17.2.1
+
+  # Misc
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/
+
+flutter_intl:
+  enabled: true
+  arb_dir: l10n
+  output_dir: lib/app/localization/generated
