@@ -10,7 +10,7 @@
 
 param(
     [string] $Adb = "",
-    [string] $BackendUrl = "http://167.99.242.212:18080",
+    [string] $BackendUrl = "http://209.38.212.146:8000",
     [string] $PairIp = "",
     [int] $PairPort = 0,
     [string] $PairCode = "",

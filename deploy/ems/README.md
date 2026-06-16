@@ -2,7 +2,7 @@
 
 Deploys **FastAPI backend** + **RQ worker** + **PostgreSQL** + **Redis** + **nginx** (admin SPA built inside the image). Published on **`EMS_PUBLISH_HTTP`** (default **18080** → container port 80) so it can coexist with **host nginx** on :80/:443.
 
-Target server: **`167.99.242.212`**. Paths: **`/home/ems`**.
+Target server: **`209.38.212.146`**. Paths: **`/home/ems`**.
 
 ## Layout on server
 

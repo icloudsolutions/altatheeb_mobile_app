@@ -493,6 +493,21 @@ DioException: Connection refused
 - **Physical device:** Use your computer's local network IP; ensure firewall allows port 8000
 - Check `BACKEND_BASE_URL` dart-define
 
+### Seed script shows `(trapped) error reading bcrypt version`
+
+This was caused by **passlib** being incompatible with **bcrypt 4.1+**. The project now uses **bcrypt directly** (no passlib). Rebuild the backend image and re-run seed:
+
+```bash
+cd mobile_backend
+docker compose build backend
+docker compose up -d backend
+docker compose exec backend python scripts/seed_local.py
+```
+
+Expected output: `Seed OK. Admin login: admin@local` (no traceback).
+
+Default admin password is `admin` unless you set `INITIAL_ADMIN_PASSWORD` in `.env`.
+
 ### Login returns 503 `odoo_unavailable_no_local_credentials`
 
 The user has never logged in successfully before (no local password hash). Ensure Odoo is reachable for the first login, or manually set `password_hash` in `app_user` table.

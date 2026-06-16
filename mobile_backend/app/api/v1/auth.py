@@ -4,18 +4,15 @@ import logging
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from ... import models, schemas
-from ...core.security import decode_token, issue_tokens
+from ...core.security import decode_token, hash_password, issue_tokens, verify_password
 from ...db.session import get_db
 from ...services.odoo_gateway import OdooGatewayClient, OdooUnavailable
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-
-_pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def _issue_for_user(user: models.AppUser, school_ids: list) -> schemas.LoginResponse:
@@ -82,7 +79,7 @@ def login(body: schemas.LoginRequest, db: Session = Depends(get_db)) -> schemas.
             user.ems_parent_id = parent_id or user.ems_parent_id
 
         # Keep a local password hash so offline login works next time.
-        user.password_hash = _pwd_ctx.hash(body.password)
+        user.password_hash = hash_password(body.password)
         user.last_login_at = datetime.utcnow()
         db.commit()
         db.refresh(user)
@@ -96,7 +93,7 @@ def login(body: schemas.LoginRequest, db: Session = Depends(get_db)) -> schemas.
     )
     if not user or not user.password_hash:
         raise HTTPException(status_code=503, detail="odoo_unavailable_no_local_credentials")
-    if not _pwd_ctx.verify(body.password, user.password_hash):
+    if not verify_password(body.password, user.password_hash):
         raise HTTPException(status_code=401, detail="invalid_credentials")
     if not user.is_active:
         raise HTTPException(status_code=403, detail="user_disabled")

@@ -2,7 +2,7 @@
 # Same as deploy.ps1 — Admin SPA is built inside the nginx Docker image on the server (no local Node required).
 set -euo pipefail
 
-SERVER_HOST="${EMS_DEPLOY_HOST:-167.99.242.212}"
+SERVER_HOST="${EMS_DEPLOY_HOST:-209.38.212.146}"
 REMOTE_DIR="${EMS_REMOTE_DIR:-/home/ems}"
 SSH_USER="${EMS_DEPLOY_USER:-root}"
 SERVER="${SSH_USER}@${SERVER_HOST}"

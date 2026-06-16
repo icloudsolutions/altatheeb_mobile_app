@@ -30,6 +30,23 @@ docker compose exec backend python scripts/seed_local.py
 
 Default admin credentials after seeding: `admin@local / admin`.
 
+### Stack control
+
+From `mobile_backend/`:
+
+```bash
+chmod +x scripts/stack.sh   # once, on Linux/macOS
+
+./scripts/stack.sh stop       # stop containers (keep data)
+./scripts/stack.sh restart    # restart all services
+./scripts/stack.sh down       # remove containers (volumes kept)
+./scripts/stack.sh up         # start detached
+./scripts/stack.sh ps         # status
+./scripts/stack.sh logs backend
+```
+
+Windows PowerShell: `.\scripts\stack.ps1 stop|restart|down|up|ps|logs`
+
 ## Folder layout
 
 ```

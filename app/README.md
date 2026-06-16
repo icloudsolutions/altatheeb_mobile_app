@@ -54,7 +54,7 @@ flutter run --dart-define=BACKEND_BASE_URL=http://10.0.2.2:8000   # Android emul
 After deploying with `../deploy/ems/` (see `../deploy/ems/README.md`), point the app at the public host and port (default **18080**, no path prefix):
 
 ```bash
-flutter run -v --debug --dart-define=BACKEND_BASE_URL=http://167.99.242.212:18080
+flutter run -v --debug --dart-define=BACKEND_BASE_URL=http://209.38.212.146:8000
 ```
 
 Or use `altatheeb_mobile_app/app/scripts/run_android_wifi_debug.ps1` (default backend URL is set to that host).

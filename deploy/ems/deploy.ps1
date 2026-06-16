@@ -9,7 +9,7 @@
 #   $env:EMS_DEPLOY_USER = "ubuntu"; .\deploy\ems\deploy.ps1
 
 param(
-    [string] $ServerHost = "167.99.242.212",
+    [string] $ServerHost = "209.38.212.146",
     [string] $RemoteDir = "/home/ems",
     [string] $SshUser = $(if ($env:EMS_DEPLOY_USER) { $env:EMS_DEPLOY_USER } else { "root" })
 )

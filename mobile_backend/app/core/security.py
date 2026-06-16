@@ -7,23 +7,22 @@ import time
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, Tuple
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from .settings import get_settings
-
-_pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 # ---------------- Passwords ----------------
 def hash_password(plain: str) -> str:
-    return _pwd_ctx.hash(plain)
+    """Hash a password with bcrypt (UTF-8, default cost factor)."""
+    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     try:
-        return _pwd_ctx.verify(plain, hashed)
-    except Exception:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except (ValueError, TypeError):
         return False
 
 

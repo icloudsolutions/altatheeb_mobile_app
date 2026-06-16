@@ -9,6 +9,7 @@ import '../../announcements/presentation/announcements_page.dart';
 import '../../attendance/domain/attendance_record.dart';
 import '../../attendance/presentation/attendance_cubit.dart';
 import '../../attendance/presentation/attendance_page.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../auth/presentation/auth_cubit.dart';
 import '../../invoices/domain/invoice.dart';
 import '../../invoices/presentation/invoice_detail_page.dart';
