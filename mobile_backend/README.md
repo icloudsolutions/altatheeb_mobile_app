@@ -47,6 +47,16 @@ chmod +x scripts/stack.sh   # once, on Linux/macOS
 
 Windows PowerShell: `.\scripts\stack.ps1 stop|restart|down|up|ps|logs`
 
+**Linux `bash\r` error:** the script was checked out with Windows line endings. Fix once:
+
+```bash
+cd /home/altatheeb_mobile_app
+git pull
+sed -i 's/\r$//' mobile_backend/scripts/stack.sh
+chmod +x mobile_backend/scripts/stack.sh
+./mobile_backend/scripts/stack.sh ps
+```
+
 ## Folder layout
 
 ```
