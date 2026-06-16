@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Control the mobile_backend Docker Compose stack (Postgres, Redis, API, worker).
+# Requires LF line endings (see repo .gitattributes).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
