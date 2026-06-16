@@ -5,6 +5,8 @@ class AppUser extends Equatable {
     required this.userId,
     required this.role,
     this.name,
+    this.email,
+    this.phone,
     this.odooUserId,
     this.emsParentId,
     this.schoolIds = const [],
@@ -13,12 +15,34 @@ class AppUser extends Equatable {
   final int userId;
   final String role;
   final String? name;
+  final String? email;
+  final String? phone;
   final int? odooUserId;
   final int? emsParentId;
   final List<int> schoolIds;
 
+  AppUser copyWith({
+    int? userId,
+    String? role,
+    String? name,
+    String? email,
+    String? phone,
+    int? odooUserId,
+    int? emsParentId,
+    List<int>? schoolIds,
+  }) => AppUser(
+    userId: userId ?? this.userId,
+    role: role ?? this.role,
+    name: name ?? this.name,
+    email: email ?? this.email,
+    phone: phone ?? this.phone,
+    odooUserId: odooUserId ?? this.odooUserId,
+    emsParentId: emsParentId ?? this.emsParentId,
+    schoolIds: schoolIds ?? this.schoolIds,
+  );
+
   @override
-  List<Object?> get props => [userId, role, name, odooUserId, emsParentId, schoolIds];
+  List<Object?> get props => [userId, role, name, email, phone, odooUserId, emsParentId, schoolIds];
 }
 
 sealed class AuthState extends Equatable {

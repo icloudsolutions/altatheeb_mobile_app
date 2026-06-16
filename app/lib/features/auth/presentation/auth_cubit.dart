@@ -11,11 +11,16 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> bootstrap() async {
     final has = await _repo.hasSavedSession();
-    if (has) {
-      // Trust saved tokens; the API layer will refresh on 401.
-      emit(const AuthAuthenticated(AppUser(userId: 0, role: 'parent')));
-    } else {
+    if (!has) {
       emit(const AuthUnauthenticated());
+      return;
+    }
+    // Emit a placeholder so the router redirects to home immediately,
+    // then fetch real profile in the background.
+    emit(const AuthAuthenticated(AppUser(userId: 0, role: 'parent')));
+    final profile = await _repo.fetchProfile();
+    if (profile != null) {
+      emit(AuthAuthenticated(profile));
     }
   }
 

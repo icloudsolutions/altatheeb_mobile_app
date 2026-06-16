@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     user_context_secret: str = ""
     odoo_inbound_hmac_secret: str = ""
 
+    # When True the backend operates fully standalone; Odoo calls are skipped and
+    # the mirror DB is the only data source. Set to False (default) to attempt
+    # Odoo first with automatic mirror-DB fallback on connection errors.
+    odoo_offline_mode: bool = False
+
     fcm_project_id: str = ""
     fcm_credentials_path: str = ""
 
@@ -37,6 +42,11 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> List[str]:
         return [o.strip() for o in self.allowed_cors_origins.split(",") if o.strip()]
+
+    @property
+    def odoo_configured(self) -> bool:
+        """True when Odoo credentials are present and offline mode is off."""
+        return bool(self.odoo_service_token) and not self.odoo_offline_mode
 
 
 @lru_cache

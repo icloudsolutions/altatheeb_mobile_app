@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../config/env.dart';
@@ -51,11 +52,13 @@ Dio buildDio({required SecureTokenStore tokenStore}) {
     },
   ));
 
-  dio.interceptors.add(PrettyDioLogger(
-    requestHeader: false,
-    requestBody: true,
-    responseBody: false,
-    responseHeader: false,
-  ));
+  if (kDebugMode) {
+    dio.interceptors.add(PrettyDioLogger(
+      requestHeader: false,
+      requestBody: true,
+      responseBody: false,
+      responseHeader: false,
+    ));
+  }
   return dio;
 }

@@ -29,6 +29,31 @@ class AuthRepository {
     );
   }
 
+  /// Fetches real profile data from /v1/me using stored tokens.
+  Future<AppUser?> fetchProfile() async {
+    try {
+      final r = await dio.get('/v1/me');
+      final data = r.data as Map<String, dynamic>;
+      final parent = data['parent'] as Map<String, dynamic>? ?? {};
+      final students = data['students'] as List? ?? [];
+      return AppUser(
+        userId: (parent['id'] as int?) ?? 0,
+        role: (data['app_role'] as String?) ?? 'parent',
+        name: parent['name'] as String?,
+        email: parent['email'] as String?,
+        phone: parent['phone'] as String?,
+        emsParentId: parent['id'] as int?,
+        schoolIds: students
+            .map((s) => (s as Map<String, dynamic>)['school_id'] as int?)
+            .whereType<int>()
+            .toSet()
+            .toList(),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> logout() async {
     try {
       await dio.post('/v1/auth/logout');
